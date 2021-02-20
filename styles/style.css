@@ -14,12 +14,72 @@ CSS TABLE OF CONTENTS
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
-    width: 300px;
-    height: 300px;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
 }
 
 .square {
-    border: 1px solid black;
-    width: 100%;
-    height: 100%;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    width: 30px;
+    height: 30px;
+}
+
+.hit {
+    width: 30px;
+    height: 30px;
+    background: #f96d6d;
+}
+
+.miss {
+    width: 30px;
+    height: 30px;
+    background: #8fb1e9;
+}
+
+.ship {
+    /* think about adding display: absolute */
+    background: lightgreen;
+    opacity: 0.99;
+    z-index: 1;
+}
+
+.HA {
+    width: 154px;
+    height: 30px;
+}
+
+.HB {
+    width: 123px;
+    height: 30px;
+}
+
+.HC {
+    width: 92px;
+    height: 30px;
+}
+
+.HD {
+    width: 61px;
+    height: 30px;
+}
+
+.VA {
+    width: 30px;
+    height: 154px;
+}
+
+.VB {
+    width: 30px;
+    height: 123px;
+}
+
+.VC {
+    width: 30px;
+    height: 92px;
+}
+
+.VD {
+    width: 30px;
+    height: 61px;
 }
