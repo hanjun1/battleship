@@ -66,18 +66,18 @@ function initBoardEle(boardEle) {
 function initBoard(board, boardEl) {
     initBoardState(board);
     initBoardEle(boardEl);
-    createShips(5, board, "A");
-    createShips(4, board, "B");
-    createShips(3, board, "C1");
-    createShips(3, board, "C2");
-    createShips(2, board, "D");
+    createRandomShips(5, board, "A");
+    createRandomShips(4, board, "B");
+    createRandomShips(3, board, "C1");
+    createRandomShips(3, board, "C2");
+    createRandomShips(2, board, "D");
 }
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-function createShips(len, board, id) {
+function createRandomShips(len, board, id) {
     let isHorizontal = getRandomInt(2) == 0 ? true : false;
 
     if (!isHorizontal) {
@@ -85,7 +85,7 @@ function createShips(len, board, id) {
         let column = getRandomInt(10);
         
         for (let i=row; i<row+len; i++) {
-            if (board[i][column] !== "") return createShips(len, board, id);
+            if (board[i][column] !== "") return createRandomShips(len, board, id);
         }
 
         board[row][column] = "V" + id;
@@ -98,7 +98,7 @@ function createShips(len, board, id) {
         let column = getRandomInt(10-len);
         
         for (let i=column; i<column+len; i++) {
-            if (board[row][i] !== "") return createShips(len, board, id);
+            if (board[row][i] !== "") return createRandomShips(len, board, id);
         }
 
         board[row][column] = "H" + id;
@@ -108,6 +108,8 @@ function createShips(len, board, id) {
         }
     }
 }
+
+
 
 function idToCoord(str) {
     return str.split(',');
@@ -147,7 +149,7 @@ function renderBoard(board, squares) {
     let col = 0;
     squares.forEach((square) => {
         let pos = board[row][col];
-        if (pos !== "" && pos !== "A" && pos !== "B" && pos !== "C" && pos !== "D" && pos !== "X" && pos !== "O") {
+        if (pos !== "" && pos !== "A" && pos !== "B" && pos !== "C1" && pos !== "C2" && pos !== "D" && pos !== "X" && pos !== "O") {
             let divEl = document.createElement("div");
             divEl.setAttribute('id', pos+','+row+','+col);
             divEl.setAttribute('class', pos);
@@ -155,12 +157,61 @@ function renderBoard(board, squares) {
             divEl.setAttribute('draggable', 'true');
             square.appendChild(divEl);
         }
-        col++;
-        if (col > 9) {
+        if (++col > 9) {
             col = 0;
             row++;
         }
     });
+}
+
+function updateStateBoard() {
+    playerBoard = [];
+    initBoardState(playerBoard);
+    let playerSquares = document.querySelectorAll('#player-board > .square');
+    let row = 0;
+    let col = 0;
+    playerSquares.forEach((square) => {
+        if (square.hasChildNodes()) {
+            let shipId = shipIdToCoord(square.childNodes[0].id);
+            playerBoard[row][col] = shipId[0];
+            createShips(shipId[0], row, col);
+        }
+        if (++col > 9) {
+            col = 0;
+            row++;
+        }
+    });
+}
+
+function createShips(shipId, row, col) {
+    let id = shipId.split("");
+    let len = 0;
+    switch (shipId.slice(1, id.length)) {
+        case "A":
+            len = 5;
+            break;
+        case "B":
+            len = 4;
+            break;
+        case "C1":
+            len = 3;
+            break;
+        case "C2":
+            len = 3;
+            break;
+        case "D":
+            len = 2;
+            break;
+    }
+    if (id[0] === "V") {
+        for (let i=row+1; i<row+len; i++) {
+            playerBoard[i][col] = shipId.slice(1, id.length);
+        }
+    } else if (id[0] === "H") {
+        for (let i=col+1; i<col+len; i++) {
+            playerBoard[row][i] = shipId.slice(1, id.length);
+        }
+    }
 }
 
 function checkWin(count) {
@@ -204,7 +255,7 @@ function computerAi(arr) {
     } else {
         playerBoard[row][col] = "O";
         computerBoardEle.classList.remove('noClick');
-        console.log(playerBoard);
+        // console.log(playerBoard);
     }
 }
 
@@ -351,6 +402,9 @@ function drop_handler(ev) {
     const data = ev.dataTransfer.getData('text/plain');
     ev.target.appendChild(document.getElementById(data));
     removeDropableLocations();
+    updateStateBoard();
+    // console.log(playerBoard);
+    // console.dir(ev.target);
 }
 
 // end
@@ -372,5 +426,5 @@ function gameStart() {
 gameStart();
 
 
-// console.log(playerBoard);
+console.log(playerBoard);
 // console.log(computerBoard);

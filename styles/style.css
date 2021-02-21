@@ -14,13 +14,13 @@ CSS TABLE OF CONTENTS
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
-    border-top: 1px solid black;
-    border-left: 1px solid black;
+    border-top: 1px solid rgba(128, 128, 128,0.5);
+    border-left: 1px solid rgba(128, 128, 128,0.5);
 }
 
 .square {
-    border-bottom: 1px solid black;
-    border-right: 1px solid black;
+    border-bottom: 1px solid rgba(128, 128, 128,0.5);
+    border-right: 1px solid rgba(128, 128, 128,0.5);
     width: 30px;
     height: 30px;
 }
@@ -39,8 +39,9 @@ CSS TABLE OF CONTENTS
 
 .ship {
     /* think about adding display: absolute */
-    background: lightgreen;
-    opacity: 0.99;
+    background: rgba(144, 238, 144, 0.5);
+    border: 1px solid black;
+
     z-index: 1;
 }
 
