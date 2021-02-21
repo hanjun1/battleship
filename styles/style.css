@@ -54,7 +54,7 @@ CSS TABLE OF CONTENTS
     height: 30px;
 }
 
-.HC {
+.HC1, .HC2 {
     width: 92px;
     height: 30px;
 }
@@ -74,7 +74,7 @@ CSS TABLE OF CONTENTS
     height: 123px;
 }
 
-.VC {
+.VC1, .VC2 {
     width: 30px;
     height: 92px;
 }
@@ -82,4 +82,14 @@ CSS TABLE OF CONTENTS
 .VD {
     width: 30px;
     height: 61px;
+}
+
+.noClick {
+    pointer-events: none;
+}
+
+#move {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
 }
