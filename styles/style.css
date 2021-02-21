@@ -5,6 +5,32 @@ CSS TABLE OF CONTENTS
 
 */
 
+.hit-ship:before {
+    position: relative;
+    content: ' \25CF';
+    font-size: 30px;
+    color: #f96d6d;
+    z-index: 100;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.miss-ship:before {
+    position: relative;
+    content: ' \25CF';
+    font-size: 30px;
+    color: #8fb1e9;
+    z-index: 100;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .board-container {
     display: flex;
     justify-content: space-evenly;
@@ -39,9 +65,9 @@ CSS TABLE OF CONTENTS
 
 .ship {
     /* think about adding display: absolute */
+    position: absolute;
     background: rgba(144, 238, 144, 0.5);
     border: 1px solid black;
-
     z-index: 1;
 }
 

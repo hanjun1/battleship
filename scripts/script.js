@@ -110,7 +110,6 @@ function createRandomShips(len, board, id) {
 }
 
 
-
 function idToCoord(str) {
     return str.split(',');
 }
@@ -120,7 +119,7 @@ function dropBomb(e) {
     playerLastCoord = idToCoord(e.target.id);
     let row = playerLastCoord[0];
     let col = playerLastCoord[1];
-    if (computerBoard[row][col] === "X") return;
+    if (computerBoard[row][col] === "X" || computerBoard[row][col] === "O") return;
     if (computerBoard[row][col] === "") {
         e.target.classList.add("miss");
         computerBoard[row][col] = "O";
@@ -139,12 +138,12 @@ function dropBomb(e) {
 function render() {
     let playerSquares = document.querySelectorAll('#player-board > .square');
     // let computerSquares = document.querySelectorAll('#computer-board > .square');
-    renderBoard(playerBoard, playerSquares);
+    renderInitialBoard(playerBoard, playerSquares);
     // renderBoard(computerBoard, computerSquares);
 }
 
 // fix render board
-function renderBoard(board, squares) {
+function renderInitialBoard(board, squares) {
     let row = 0;
     let col = 0;
     squares.forEach((square) => {
@@ -163,6 +162,46 @@ function renderBoard(board, squares) {
         }
     });
 }
+
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+      currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+  }
+
+function renderBoard() {
+    let playerSquares = document.querySelectorAll('#player-board > .square');
+    let row = 0;
+    let col = 0;
+    playerSquares.forEach((square) => {
+        if (playerBoard[row][col] === "O") {
+            if (!square.hasChildNodes()) {
+                let spanEl = document.createElement("span");
+                spanEl.setAttribute('class', 'miss-ship');
+                square.appendChild(spanEl);
+            }
+        } else if (playerBoard[row][col] === "X") {
+            if (square.childNodes.length === 0) {
+                let spanEl = document.createElement("span");
+                spanEl.setAttribute('class', 'hit-ship');
+                square.appendChild(spanEl);
+            } else if (square.childNodes.length === 1) {
+                if (square.childNodes[0].nodeName === "DIV") {
+                    let spanEl = document.createElement("span");
+                    spanEl.setAttribute('class', 'hit-ship');
+                    square.appendChild(spanEl);
+                }
+            }
+        }
+        if (++col > 9) {
+            col = 0;
+            row++;
+        }
+    });
+}
+
 
 function updateStateBoard() {
     playerBoard = [];
@@ -248,12 +287,14 @@ function computerAi(arr) {
         playerBoard[row][col] = "X";
         computerHitCount++;
         if (checkWin(computerHitCount)) {
+            renderBoard();
             computerBoardEle.classList.add('noClick');
         } else {
             computerAi(arr);
         }
     } else {
         playerBoard[row][col] = "O";
+        renderBoard();
         computerBoardEle.classList.remove('noClick');
         // console.log(playerBoard);
     }
@@ -403,8 +444,6 @@ function drop_handler(ev) {
     ev.target.appendChild(document.getElementById(data));
     removeDropableLocations();
     updateStateBoard();
-    // console.log(playerBoard);
-    // console.dir(ev.target);
 }
 
 // end
@@ -414,6 +453,7 @@ function lockAllShips() {
     ships.forEach((ship) => {
         ship.removeAttribute('draggable');
     });
+    console.log(playerBoard);
     generateAiMoves(aiMoves);
     computerBoardEle.addEventListener('click', dropBomb);
 }
