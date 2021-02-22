@@ -15,16 +15,82 @@ body {
     margin-right: auto;
 }
 
-header {
-    font-size: 3.5em;
-    text-align: center;
-    padding: 1em;
-}
-
 button {
     font-family: 'Londrina Solid', cursive;
     font-size: 1em;
     background: white;
+}
+
+h1 {
+    font-size: 7em;
+}
+
+h2 {
+    font-size: 3em;
+}
+
+form > p {
+    font-size: 2em;
+}
+
+label {
+    font-size: 2em;
+}
+
+.modal {
+    position: fixed;
+    z-index: 100;
+    left: 30%;
+    top: 30%;
+    width: 40%;
+}
+
+.modal-content {
+    position: relative;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid black;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    width: 40%;
+    background: white;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+#result-message {
+    font-size: 2em;
+    padding: 0.5em;
+}
+
+#play-again {
+    font-size: 1.25em;
+}
+
+#main-play {
+    font-size: 2em;
+}
+
+.board-title {
+    text-align: center;
+    font-size: 1.2em;
+    margin: 1em;
+}
+
+.title-page {
+    position: static;
+    text-align: center;
+    width: 800px;
+    margin-top: 30%;
+}
+
+.ghost {
+    display: none;
+}
+
+.header {
+    font-size: 3.5em;
+    text-align: center;
+    padding: 1em;
 }
 
 .instruction-container {

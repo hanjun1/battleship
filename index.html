@@ -11,29 +11,57 @@
     <title>Battleship!</title>
 </head>
 <body>
-    <header>BATTLESHIP</header>
-    <div class="board-container">
-        <div id="player-board" class="board">
+    <div class="title-page">
+        <h1>BATTLESHIP</h1>
+        <h2>vs AI</h2>
+        <form id="difficulty">
+            <br>
+            <p>CHOOSE A DIFFICULTY:</p>
+            <br>
+            <input id="easy" type="radio" name="difficulty" value="easy"> 
+            <label for="easy">EASY</label>
+            <br>
+            <input id="hard" type="radio" name="difficulty" value="easy">
+            <label for="hard">HARD</label>
+            <br>
+        </form>
+        <br>
+        <button id="main-play" type="button" form="difficulty">PLAY</button>
+    </div>
+    <div class="main-page ghost">
+        <div class="header">BATTLESHIP</div>
+        <div class="board-container">
+            <div>
+                <p class="board-title">YOU</p>
+                <div id="player-board" class="board">
+                </div>
+            </div>
+            <div class="button-container">
+                <button type="button" id="lock">Play</button>
+            </div>
+            <div>
+                <p class="board-title">COMPUTER</p>
+                <div id="computer-board" class="board">
+                </div>
+            </div>
         </div>
-        <div class="button-container">
-            <button type="button" id="lock">Play</button>
-            <button type="button" id="reset">Reset</button>
-        </div>
-        <div id="computer-board" class="board">
+        <div class="instruction-container">
+            <div id="before-lock" class="instructions">
+                <p>Drag and drop pieces on the board to rearrange them.</p>
+                <p>Click on the ships to rotate them.</p>
+                <p>Press 'Play' to lock in your ship placements and go to battle!</p>
+            </div>
+            <div id="after-lock" class="instructions ghost">
+                <p>Click on the enemy board to sink their ships!</p>
+            </div>
         </div>
     </div>
-    <div class="instruction-container">
-        <div class="instructions">
-            <p>Drag and drop pieces on the board to rearrange them.</p>
-            <p>Click on the ships to rotate them.</p>
-            <p>Press 'Play' to lock in your ship placements and go to battle!</p>
-        </div>
-        <div class="instructions">
-            <p>Click on the enemy board to sink their ships!</p>
+    <div id="play-again-modal" class="modal ghost">
+        <div class="modal-content">
+            <p id="result-message">YOU LOST!</p>
+            <button id="play-again" onClick="window.location.reload();">PLAY AGAIN?</button>
         </div>
     </div>
-    
-    
     <script src="scripts/script.js"></script>
 </body>
 </html>

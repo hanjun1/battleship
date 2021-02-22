@@ -21,17 +21,28 @@ let playerTurn = true;
 let computerBoardEle = document.getElementById('computer-board');
 let playerBoardEle = document.getElementById('player-board');
 let lockButton = document.getElementById('lock');
-let resetButton = document.getElementById('reset');
 let boardContainer = document.getElementById('board-container');
+let mainPlayButton = document.getElementById('main-play');
+let titlePageContainer = document.querySelector('.title-page');
+let mainContainer = document.querySelector('.main-page');
+let beforeLockText = document.getElementById('before-lock');
+let afterLockText = document.getElementById('after-lock');
+let modal = document.getElementById('play-again-modal');
+let resultMessage = document.getElementById('result-message');
 
 
 /*-- EVENT LISTENERS --*/
 
 // need to add play again button
 lockButton.addEventListener('click', lockAllShips);
-// resetButton.addEventListener('click', reset)
+mainPlayButton.addEventListener('click', showMain);
 
 /*-- FUNCTIONS --*/
+
+function showMain(e) {
+    titlePageContainer.classList.add('ghost');
+    mainContainer.classList.remove('ghost');
+}
 
 function init() {
     initBoard(playerBoard, playerBoardEle);
@@ -75,12 +86,6 @@ function initBoard(board, boardEl) {
     createRandomShips(3, board, "C2");
     createRandomShips(2, board, "D");
 }
-
-// function reset(e) {
-//     playerBoard = [];
-//     computerBoard = [];
-//     init();
-// }
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -140,6 +145,9 @@ function dropBomb(e) {
         playerHitCount++;
         if (checkWin(playerHitCount)) {
             computerBoardEle.classList.add('noClick');
+            resultMessage.innerHTML = "";
+            resultMessage.innerHTML = "YOU WON!";
+            modal.classList.remove('ghost');
         }
     }
 }
@@ -290,6 +298,9 @@ function computerAi(arr) {
         if (checkWin(computerHitCount)) {
             renderBoard();
             computerBoardEle.classList.add('noClick');
+            resultMessage.innerHTML = "";
+            resultMessage.innerHTML = "YOU LOST!";
+            modal.classList.remove('ghost');
         } else {
             computerAi(arr);
         }
@@ -458,6 +469,8 @@ function lockAllShips() {
     computerBoardEle.addEventListener('click', dropBomb);
     lockButton.setAttribute('class', 'noClick');
     playerBoardEle.classList.add('noClick');
+    beforeLockText.classList.add('ghost');
+    afterLockText.classList.remove('ghost');
 }
 
 function rotatePieces(e) {
