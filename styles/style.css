@@ -113,8 +113,9 @@ footer {
 }
 
 .instructions {
-    width: 70%;
+    width: 100%;
     font-size: 1.2em;
+    text-align: center;
 }
 
 .instructions > p {
@@ -189,9 +190,17 @@ footer {
 .ship {
     /* think about adding display: absolute */
     position: absolute;
-    background: rgba(144, 238, 144, 0.5);
-    border: 1px solid black;
+    background: rgba(144, 238, 144, 0.7);
+    border: 1px solid rgba(0, 0, 0, 1);
     z-index: 1;
+}
+
+.not-turn {
+    width: 311px;
+    height: 359px;
+    position: absolute;
+    background: rgba(255, 255, 255, 0.5);
+    z-index: 2;
 }
 
 .HA {

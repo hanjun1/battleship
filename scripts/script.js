@@ -32,7 +32,8 @@ let afterLockText = document.getElementById('after-lock');
 let modal = document.getElementById('play-again-modal');
 let resultMessage = document.getElementById('result-message');
 let radios = document.getElementsByName('difficulty');
-
+let playerFilter = document.getElementById('player-filter');
+let computerFilter = document.getElementById('computer-filter');
 
 /*-- EVENT LISTENERS --*/
 
@@ -46,7 +47,6 @@ function showMain(e) {
     for (let i=0; i<radios.length; i++) {
         if (radios[i].checked) {
             difficulty = radios[i].value;
-            console.log(difficulty);
             break;
         }
     }
@@ -145,15 +145,19 @@ function dropBomb(e) {
     let col = playerLastCoord[1];
     if (computerBoard[row][col] === "X" || computerBoard[row][col] === "O") return;
     if (computerBoard[row][col] === "") {
+        computerFilter.setAttribute('class', 'not-turn');
+        playerFilter.classList.remove('not-turn');
         e.target.classList.add("miss");
         computerBoard[row][col] = "O";
         computerBoardEle.classList.add('noClick');
         if (difficulty === "easy") {
-            console.log("Easy computer!");
-            computerEasyAi(aiMoves);
+            setTimeout(function() {
+                computerEasyAi(aiMoves);
+            }, 500);
         } else if (difficulty === "hard") {
-            console.log("Hard computer!");
-            computerHardAi(aiMoves);
+            setTimeout(function() {
+                computerHardAi(aiMoves);
+            }, 500);
         } else {
             console.log("Something has gone terribly wrong!");
         }
@@ -172,9 +176,7 @@ function dropBomb(e) {
 
 function render() {
     let playerSquares = document.querySelectorAll('#player-board > .square');
-    // let computerSquares = document.querySelectorAll('#computer-board > .square');
     renderInitialBoard(playerBoard, playerSquares);
-    // renderBoard(computerBoard, computerSquares);
 }
 
 // fix render board
@@ -293,9 +295,24 @@ function numToCoord(num) {
 }
 
 function generateAiMoves(arr) {
-    for (let i=0; i<100; i++) {
-        arr.push(i);
+    if (difficulty === "easy") {
+        for (let i=0; i<100; i++) {
+            arr.push(i);
+        }
+    } else if (difficulty === "hard") {
+        for (let i=0; i<100; i++) {
+            if (Math.floor(i/10) % 2 === 0) {
+                if (i % 2 === 0) {
+                    arr.push(i);
+                }
+            } else {
+                if (i % 2 !== 0) {
+                    arr.push(i);
+                }
+            }
+        }
     }
+    
     let m = arr.length, t, i;
     // fisher-yates shuffle
     while (m) {
@@ -308,7 +325,6 @@ function generateAiMoves(arr) {
 
 function computerHardAi(arr) {
     let coord, row, col;
-    console.log(aiHitMoves.length);
     if (aiHitMoves.length === 0) {
         coord = numToCoord(arr.pop());
     } else {
@@ -338,10 +354,14 @@ function computerHardAi(arr) {
             if (col > 0) {
                 aiHitMoves.push([row, col-1]);
             }
-            computerHardAi(arr);
             renderBoard();
+            setTimeout(function() {
+                computerHardAi(arr);
+            }, 1000);
         }
     } else if (playerBoard[row][col] === "") {
+        playerFilter.setAttribute('class', 'not-turn');
+        computerFilter.classList.remove('not-turn');
         playerBoard[row][col] = "O";
         renderBoard();
         computerBoardEle.classList.remove('noClick');
@@ -364,10 +384,14 @@ function computerEasyAi(arr) {
             resultMessage.innerHTML = "YOU LOST!";
             modal.classList.remove('ghost');
         } else {
-            computerEasyAi(arr);
             renderBoard();
+            setTimeout(function() {
+                computerEasyAi(arr);
+            }, 1000);
         }
     } else {
+        playerFilter.setAttribute('class', 'not-turn');
+        computerFilter.classList.remove('not-turn');
         playerBoard[row][col] = "O";
         renderBoard();
         computerBoardEle.classList.remove('noClick');
@@ -533,6 +557,8 @@ function lockAllShips() {
     playerBoardEle.classList.add('noClick');
     beforeLockText.classList.add('ghost');
     afterLockText.classList.remove('ghost');
+    playerFilter.setAttribute('class', 'not-turn');
+    computerFilter.classList.remove('not-turn');
 }
 
 function rotatePieces(e) {
@@ -540,8 +566,6 @@ function rotatePieces(e) {
     if (checkValidRotation(e.target)) {
         updateStateBoard();
     }
-    // console.log(e.target);
-    
 }
 
 function checkValidRotation(ele) {
@@ -599,7 +623,3 @@ function gameStart() {
 }
 
 gameStart();
-
-
-// console.log(playerBoard);
-// console.log(computerBoard);
