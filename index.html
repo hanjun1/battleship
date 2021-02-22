@@ -18,10 +18,10 @@
             <br>
             <p>CHOOSE A DIFFICULTY:</p>
             <br>
-            <input id="easy" type="radio" name="difficulty" value="easy"> 
+            <input id="easy" type="radio" name="difficulty" value="easy" checked="checked"> 
             <label for="easy">EASY</label>
             <br>
-            <input id="hard" type="radio" name="difficulty" value="easy">
+            <input id="hard" type="radio" name="difficulty" value="hard">
             <label for="hard">HARD</label>
             <br>
         </form>
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="button-container">
-                <button type="button" id="lock">Play</button>
+                <button type="button" id="lock">LOCK IN</button>
             </div>
             <div>
                 <p class="board-title">COMPUTER</p>
@@ -49,13 +49,14 @@
             <div id="before-lock" class="instructions">
                 <p>Drag and drop pieces on the board to rearrange them.</p>
                 <p>Click on the ships to rotate them.</p>
-                <p>Press 'Play' to lock in your ship placements and go to battle!</p>
+                <p>Press 'LOCK IN' to go to battle!</p>
             </div>
             <div id="after-lock" class="instructions ghost">
                 <p>Click on the enemy board to sink their ships!</p>
             </div>
         </div>
     </div>
+    <footer>&#169; 2021, Ryan Kim, All rights reserved.</footer>
     <div id="play-again-modal" class="modal ghost">
         <div class="modal-content">
             <p id="result-message">YOU LOST!</p>

@@ -13,7 +13,9 @@ let gameOn = true;
 let playerHitCount = 0;
 let computerHitCount = 0;
 let aiMoves = [];
+let aiHitMoves = [];
 let playerTurn = true;
+let difficulty;
 
 
 /*-- CAHCED ELEMENT REFERENCES --*/
@@ -29,6 +31,7 @@ let beforeLockText = document.getElementById('before-lock');
 let afterLockText = document.getElementById('after-lock');
 let modal = document.getElementById('play-again-modal');
 let resultMessage = document.getElementById('result-message');
+let radios = document.getElementsByName('difficulty');
 
 
 /*-- EVENT LISTENERS --*/
@@ -40,6 +43,13 @@ mainPlayButton.addEventListener('click', showMain);
 /*-- FUNCTIONS --*/
 
 function showMain(e) {
+    for (let i=0; i<radios.length; i++) {
+        if (radios[i].checked) {
+            difficulty = radios[i].value;
+            console.log(difficulty);
+            break;
+        }
+    }
     titlePageContainer.classList.add('ghost');
     mainContainer.classList.remove('ghost');
 }
@@ -138,7 +148,15 @@ function dropBomb(e) {
         e.target.classList.add("miss");
         computerBoard[row][col] = "O";
         computerBoardEle.classList.add('noClick');
-        computerAi(aiMoves);
+        if (difficulty === "easy") {
+            console.log("Easy computer!");
+            computerEasyAi(aiMoves);
+        } else if (difficulty === "hard") {
+            console.log("Hard computer!");
+            computerHardAi(aiMoves);
+        } else {
+            console.log("Something has gone terribly wrong!");
+        }
     } else {
         e.target.classList.add("hit");
         computerBoard[row][col] = "X";
@@ -288,7 +306,51 @@ function generateAiMoves(arr) {
     }
 }
 
-function computerAi(arr) {
+function computerHardAi(arr) {
+    let coord, row, col;
+    console.log(aiHitMoves.length);
+    if (aiHitMoves.length === 0) {
+        coord = numToCoord(arr.pop());
+    } else {
+        coord = aiHitMoves.shift();
+    }
+    row = coord[0];
+    col = coord[1];
+    if (playerBoard[row][col] !== "" && playerBoard[row][col] !== "O" && playerBoard[row][col] !== "X") {
+        playerBoard[row][col] = "X";
+        computerHitCount++;
+        if (checkWin(computerHitCount)) {
+            renderBoard();
+            computerBoardEle.classList.add('noClick');
+            resultMessage.innerHTML = "";
+            resultMessage.innerHTML = "YOU LOST!";
+            modal.classList.remove('ghost');
+        } else {
+            if (col < BOARD_LEN-1) {
+                aiHitMoves.push([row, col+1]);
+            }
+            if (row < BOARD_LEN-1) {
+                aiHitMoves.push([row+1, col]);
+            }
+            if (row > 0) {
+                aiHitMoves.push([row-1, col]);
+            }
+            if (col > 0) {
+                aiHitMoves.push([row, col-1]);
+            }
+            computerHardAi(arr);
+            renderBoard();
+        }
+    } else if (playerBoard[row][col] === "") {
+        playerBoard[row][col] = "O";
+        renderBoard();
+        computerBoardEle.classList.remove('noClick');
+    } else {
+        computerHardAi(arr);
+    }
+}
+
+function computerEasyAi(arr) {
     let coord = numToCoord(arr.pop());
     let row = coord[0];
     let col = coord[1];
@@ -302,13 +364,13 @@ function computerAi(arr) {
             resultMessage.innerHTML = "YOU LOST!";
             modal.classList.remove('ghost');
         } else {
-            computerAi(arr);
+            computerEasyAi(arr);
+            renderBoard();
         }
     } else {
         playerBoard[row][col] = "O";
         renderBoard();
         computerBoardEle.classList.remove('noClick');
-        // console.log(playerBoard);
     }
 }
 
@@ -467,7 +529,7 @@ function lockAllShips() {
     });
     generateAiMoves(aiMoves);
     computerBoardEle.addEventListener('click', dropBomb);
-    lockButton.setAttribute('class', 'noClick');
+    lockButton.setAttribute('class', 'ghost');
     playerBoardEle.classList.add('noClick');
     beforeLockText.classList.add('ghost');
     afterLockText.classList.remove('ghost');
