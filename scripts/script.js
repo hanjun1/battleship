@@ -18,19 +18,31 @@ let playerTurn = true;
 
 /*-- CAHCED ELEMENT REFERENCES --*/
 
-let computerBoardEle = document.getElementById('computer-board');
-let playerBoardEle = document.getElementById('player-board');
+
 let lockButton = document.getElementById('lock');
+let resetButton = document.getElementById('reset');
+let boardContainer = document.querySelector('.board-container');
 
 
 /*-- EVENT LISTENERS --*/
 
 // need to add play again button
 lockButton.addEventListener('click', lockAllShips);
+resetButton.addEventListener('click', reset);
 
 /*-- FUNCTIONS --*/
 
 function init() {
+    let playerBoardContainer = document.createElement("div");
+    playerBoardContainer.setAttribute('id', 'player-board');
+    playerBoardContainer.setAttribute('class', 'board');
+    let computerBoardContainer = document.createElement("div");
+    computerBoardContainer.setAttribute('id', 'computer-board');
+    computerBoardContainer.setAttribute('class', 'board');
+    boardContainer.appendChild(playerBoardContainer);
+    boardContainer.appendChild(computerBoardContainer);
+    let computerBoardEle = document.getElementById('computer-board');
+    let playerBoardEle = document.getElementById('player-board');
     initBoard(playerBoard, playerBoardEle);
     initBoard(computerBoard, computerBoardEle);
     render();
@@ -71,6 +83,16 @@ function initBoard(board, boardEl) {
     createRandomShips(3, board, "C1");
     createRandomShips(3, board, "C2");
     createRandomShips(2, board, "D");
+}
+
+function reset(e) {
+    playerBoard = [];
+    computerBoard = [];
+    let computerBoardEle = document.getElementById('computer-board');
+    let playerBoardEle = document.getElementById('player-board');
+    boardContainer.removeChild(playerBoardEle);
+    boardContainer.removeChild(computerBoardEle);
+    init();
 }
 
 function getRandomInt(max) {
@@ -117,6 +139,7 @@ function idToCoord(str) {
 function dropBomb(e) {
     if (!e.target.classList.contains("square") && !e.target.classList.contains("ship")) return;
     playerLastCoord = idToCoord(e.target.id);
+    let computerBoardEle = document.getElementById('computer-board');
     let row = playerLastCoord[0];
     let col = playerLastCoord[1];
     if (computerBoard[row][col] === "X" || computerBoard[row][col] === "O") return;
@@ -162,14 +185,6 @@ function renderInitialBoard(board, squares) {
         }
     });
 }
-
-function sleep(milliseconds) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-      currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
-  }
 
 function renderBoard() {
     let playerSquares = document.querySelectorAll('#player-board > .square');
@@ -280,6 +295,7 @@ function generateAiMoves(arr) {
 }
 
 function computerAi(arr) {
+    let computerBoardEle = document.getElementById('computer-board');
     let coord = numToCoord(arr.pop());
     let row = coord[0];
     let col = coord[1];
@@ -455,6 +471,7 @@ function lockAllShips() {
     });
     console.log(playerBoard);
     generateAiMoves(aiMoves);
+    let computerBoardEle = document.getElementById('computer-board');
     computerBoardEle.addEventListener('click', dropBomb);
 }
 // game start 
@@ -465,6 +482,6 @@ function gameStart() {
 
 gameStart();
 
-
-console.log(playerBoard);
+console.dir(boardContainer);
+// console.log(playerBoard);
 // console.log(computerBoard);
