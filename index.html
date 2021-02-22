@@ -6,12 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/reset.css">
     <link rel="stylesheet" href="styles/style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap" rel="stylesheet">
     <title>Battleship!</title>
 </head>
 <body>
-    <div class="board-container"></div>
-    <button type="button" id="lock">Play</button>
-    <button type="button" id="reset">Reset</button>
+    <header>BATTLESHIP</header>
+    <div class="board-container">
+        <div id="player-board" class="board">
+        </div>
+        <div class="button-container">
+            <button type="button" id="lock">Play</button>
+            <button type="button" id="reset">Reset</button>
+        </div>
+        <div id="computer-board" class="board">
+        </div>
+    </div>
+    <div class="instruction-container">
+        <div class="instructions">
+            <p>Drag and drop pieces on the board to rearrange them.</p>
+            <p>Click on the ships to rotate them.</p>
+            <p>Press 'Play' to lock in your ship placements and go to battle!</p>
+        </div>
+        <div class="instructions">
+            <p>Click on the enemy board to sink their ships!</p>
+        </div>
+    </div>
+    
+    
     <script src="scripts/script.js"></script>
 </body>
 </html>

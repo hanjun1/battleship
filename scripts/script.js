@@ -18,31 +18,22 @@ let playerTurn = true;
 
 /*-- CAHCED ELEMENT REFERENCES --*/
 
-
+let computerBoardEle = document.getElementById('computer-board');
+let playerBoardEle = document.getElementById('player-board');
 let lockButton = document.getElementById('lock');
 let resetButton = document.getElementById('reset');
-let boardContainer = document.querySelector('.board-container');
+let boardContainer = document.getElementById('board-container');
 
 
 /*-- EVENT LISTENERS --*/
 
 // need to add play again button
 lockButton.addEventListener('click', lockAllShips);
-resetButton.addEventListener('click', reset);
+// resetButton.addEventListener('click', reset)
 
 /*-- FUNCTIONS --*/
 
 function init() {
-    let playerBoardContainer = document.createElement("div");
-    playerBoardContainer.setAttribute('id', 'player-board');
-    playerBoardContainer.setAttribute('class', 'board');
-    let computerBoardContainer = document.createElement("div");
-    computerBoardContainer.setAttribute('id', 'computer-board');
-    computerBoardContainer.setAttribute('class', 'board');
-    boardContainer.appendChild(playerBoardContainer);
-    boardContainer.appendChild(computerBoardContainer);
-    let computerBoardEle = document.getElementById('computer-board');
-    let playerBoardEle = document.getElementById('player-board');
     initBoard(playerBoard, playerBoardEle);
     initBoard(computerBoard, computerBoardEle);
     render();
@@ -85,15 +76,11 @@ function initBoard(board, boardEl) {
     createRandomShips(2, board, "D");
 }
 
-function reset(e) {
-    playerBoard = [];
-    computerBoard = [];
-    let computerBoardEle = document.getElementById('computer-board');
-    let playerBoardEle = document.getElementById('player-board');
-    boardContainer.removeChild(playerBoardEle);
-    boardContainer.removeChild(computerBoardEle);
-    init();
-}
+// function reset(e) {
+//     playerBoard = [];
+//     computerBoard = [];
+//     init();
+// }
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -139,7 +126,6 @@ function idToCoord(str) {
 function dropBomb(e) {
     if (!e.target.classList.contains("square") && !e.target.classList.contains("ship")) return;
     playerLastCoord = idToCoord(e.target.id);
-    let computerBoardEle = document.getElementById('computer-board');
     let row = playerLastCoord[0];
     let col = playerLastCoord[1];
     if (computerBoard[row][col] === "X" || computerBoard[row][col] === "O") return;
@@ -295,7 +281,6 @@ function generateAiMoves(arr) {
 }
 
 function computerAi(arr) {
-    let computerBoardEle = document.getElementById('computer-board');
     let coord = numToCoord(arr.pop());
     let row = coord[0];
     let col = coord[1];
@@ -469,19 +454,77 @@ function lockAllShips() {
     ships.forEach((ship) => {
         ship.removeAttribute('draggable');
     });
-    console.log(playerBoard);
     generateAiMoves(aiMoves);
-    let computerBoardEle = document.getElementById('computer-board');
     computerBoardEle.addEventListener('click', dropBomb);
+    lockButton.setAttribute('class', 'noClick');
+    playerBoardEle.classList.add('noClick');
 }
+
+function rotatePieces(e) {
+    if (!e.target.classList.contains('ship')) return;
+    if (checkValidRotation(e.target)) {
+        updateStateBoard();
+    }
+    // console.log(e.target);
+    
+}
+
+function checkValidRotation(ele) {
+    let coord = idToCoord(ele.parentNode.id);
+    let row = parseInt(coord[0]);
+    let col = parseInt(coord[1]);
+    let oldShipType = playerBoard[row][col];
+    let direction = oldShipType.slice(0,1);
+    if (direction === "H") direction = "V";
+    else direction = "H";
+    let newShipType = direction + oldShipType.slice(1,oldShipType.length);
+    let id = newShipType.split("");
+    let len = 0;
+    switch (newShipType.slice(1, id.length)) {
+        case "A":
+            len = 5;
+            break;
+        case "B":
+            len = 4;
+            break;
+        case "C1":
+            len = 3;
+            break;
+        case "C2":
+            len = 3;
+            break;
+        case "D":
+            len = 2;
+            break;
+    }
+    if (id[0] === "V") {
+        for (let i=row+1; i<row+len; i++) {
+            if (i >= BOARD_LEN) return false;
+            if (playerBoard[i][col] !== "") return false;
+        }
+    } else if (id[0] === "H") {
+        for (let i=col+1; i<col+len; i++) {
+            if (i >= BOARD_LEN) return false;
+            if (playerBoard[row][i] !== "") return false;
+        }
+    }
+
+    ele.setAttribute('id', newShipType + "," + coord[0] + "," + coord[1]);
+    ele.classList.remove(oldShipType);
+    ele.classList.add(newShipType);
+
+    return true;
+}
+
 // game start 
 
 function gameStart() {
     init();
+    playerBoardEle.addEventListener('click', rotatePieces);
 }
 
 gameStart();
 
-console.dir(boardContainer);
+
 // console.log(playerBoard);
 // console.log(computerBoard);

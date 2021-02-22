@@ -5,6 +5,44 @@ CSS TABLE OF CONTENTS
 
 */
 
+html {
+    font-family: 'Londrina Solid', cursive;
+}
+
+body {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header {
+    font-size: 3.5em;
+    text-align: center;
+    padding: 1em;
+}
+
+button {
+    font-family: 'Londrina Solid', cursive;
+    font-size: 1em;
+    background: white;
+}
+
+.instruction-container {
+    display: flex;
+}
+
+.instructions {
+    width: 50%;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .hit-ship:before {
     position: relative;
     content: ' \25CF';
@@ -34,6 +72,7 @@ CSS TABLE OF CONTENTS
 .board-container {
     display: flex;
     justify-content: space-evenly;
+    margin-bottom: 1.5em;
 }
 
 .board {
