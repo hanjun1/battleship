@@ -202,8 +202,10 @@ function dropBomb(e) {
     let col = playerLastCoord[1];
     if (computerBoard[row][col] === "X" || computerBoard[row][col] === "O") return;
     if (computerBoard[row][col] === "") {
-        computerFilter.setAttribute('class', 'not-turn');
-        playerFilter.classList.remove('not-turn');
+        setTimeout(function() {
+            computerFilter.setAttribute('class', 'not-turn');
+            playerFilter.classList.remove('not-turn');
+        }, 500);
         e.target.classList.add("miss");
         missSound.play();
         computerBoard[row][col] = "O";
@@ -423,10 +425,12 @@ function computerHardAi(arr) {
             }, 1000);
         }
     } else if (playerBoard[row][col] === "") {
-        playerFilter.setAttribute('class', 'not-turn');
-        computerFilter.classList.remove('not-turn');
         playerBoard[row][col] = "O";
         renderBoard();
+        setTimeout(function() {
+            playerFilter.setAttribute('class', 'not-turn');
+            computerFilter.classList.remove('not-turn');
+        }, 750);
         computerBoardEle.classList.remove('noClick');
     } else {
         computerHardAi(arr);
@@ -455,10 +459,12 @@ function computerEasyAi(arr) {
             }, 1000);
         }
     } else {
-        playerFilter.setAttribute('class', 'not-turn');
-        computerFilter.classList.remove('not-turn');
         playerBoard[row][col] = "O";
         renderBoard();
+        setTimeout(function() {
+            playerFilter.setAttribute('class', 'not-turn');
+            computerFilter.classList.remove('not-turn');
+        }, 750);
         computerBoardEle.classList.remove('noClick');
     }
 }
