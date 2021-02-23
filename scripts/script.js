@@ -606,6 +606,7 @@ function drop_handler(ev) {
     const data = ev.dataTransfer.getData('text/plain');
     ev.target.appendChild(document.getElementById(data));
     removeDropableLocations();
+    
     clickSound.play();
     updateStateBoard();
 }
@@ -635,6 +636,10 @@ function rotatePieces(e) {
         updateStateBoard();
     } else {
         invalidSound.play();
+        e.target.style.animation = "shake 0.5s";
+        setTimeout(function() {
+            e.target.style.removeProperty('animation');
+        }, 500);
     }
 }
 
