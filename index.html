@@ -18,15 +18,19 @@
             <br>
             <p>CHOOSE A DIFFICULTY:</p>
             <br>
-            <input id="easy" type="radio" name="difficulty" value="easy" checked="checked"> 
-            <label for="easy">EASY</label>
-            <br>
-            <input id="hard" type="radio" name="difficulty" value="hard">
-            <label for="hard">HARD</label>
+            <div class="difficulty-container">
+                <input id="easy" type="radio" name="difficulty" value="easy" checked="checked" onClick="clickSound.play();"> 
+                <label for="easy">EASY</label>
+                <br>
+                <input id="hard" type="radio" name="difficulty" value="hard" onClick="clickSound.play();">
+                <label for="hard">HARD</label>
+            </div>
             <br>
         </form>
-        <br>
-        <button id="main-play" type="button" form="difficulty">PLAY</button>
+        <button id="main-play" type="button" form="difficulty">BATTLE</button>
+        <div>
+            <button id="effect-sound-title" type="button" class="on">SFX SOUND ON</button>
+        </div>
     </div>
     <div class="main-page ghost">
         <div class="header">BATTLESHIP</div>
@@ -57,12 +61,15 @@
                 <p>Click on the computer's board to sink their ships!</p>
             </div>
         </div>
+        <div class="sfx-container">
+            <button id="effect-sound-main" type="button" class="on">SFX SOUND ON</button>
+        </div>
     </div>
     <footer>&#169; 2021, Ryan Kim, All rights reserved.</footer>
     <div id="play-again-modal" class="modal ghost">
         <div class="modal-content">
             <p id="result-message">YOU LOST!</p>
-            <button id="play-again" onClick="window.location.reload();">PLAY AGAIN?</button>
+            <button id="play-again" onClick="window.location.reload(); clickSound.play();" >PLAY AGAIN?</button>
         </div>
     </div>
     <script src="scripts/script.js"></script>

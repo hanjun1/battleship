@@ -9,13 +9,13 @@ const TOTAL_SHIPS = 17;
 //  H - Horizontal, V - Vertical, A,B,C,D - Ships, X - Hit, O - Miss
 let playerBoard = [];
 let computerBoard = [];
-let gameOn = true;
 let playerHitCount = 0;
 let computerHitCount = 0;
 let aiMoves = [];
 let aiHitMoves = [];
 let playerTurn = true;
 let difficulty;
+let soundOn = true;
 
 
 /*-- CAHCED ELEMENT REFERENCES --*/
@@ -34,14 +34,70 @@ let resultMessage = document.getElementById('result-message');
 let radios = document.getElementsByName('difficulty');
 let playerFilter = document.getElementById('player-filter');
 let computerFilter = document.getElementById('computer-filter');
+let sfxTitleButton = document.getElementById('effect-sound-title');
+let sfxMainButton = document.getElementById('effect-sound-main');
+
+/*-- SOUND EFFECTS --*/
+
+let clickSound = new Audio('media/click.wav');
+let missSound = new Audio('media/miss-sound.wav');
+let hitSound = new Audio('media/hit-marker-sound.mp3');
+let loseGameSound = new Audio('media/lose-game-sound.mp3');
+let winGameSound = new Audio('media/win-game-sound.mp3');
+let invalidSound = new Audio('media/invalid-sound.mp3');
 
 /*-- EVENT LISTENERS --*/
 
-// need to add play again button
 lockButton.addEventListener('click', lockAllShips);
 mainPlayButton.addEventListener('click', showMain);
+sfxTitleButton.addEventListener('click', soundState);
+sfxMainButton.addEventListener('click', soundState);
 
 /*-- FUNCTIONS --*/
+
+function soundState(e) {
+    checkIfSfxMain(e.target);
+    if (soundOn) {
+        clickSound = new Audio();
+        missSound = new Audio();
+        hitSound = new Audio();
+        loseGameSound = new Audio();
+        winGameSound = new Audio();
+        invalidSound = new Audio();
+        soundOn = false;
+    } else {
+        clickSound = new Audio('media/click.wav');
+        missSound = new Audio('media/miss-sound.wav');
+        hitSound = new Audio('media/hit-marker-sound.mp3');
+        loseGameSound = new Audio('media/lose-game-sound.mp3');
+        winGameSound = new Audio('media/win-game-sound.mp3');
+        invalidSound = new Audio('media/invalid-sound.mp3');
+        soundOn = true;
+        clickSound.play();
+    }
+}
+
+function checkIfSfxMain(e) {
+    if (soundOn) {
+        if (e.id === "effect-sound-title") {
+            sfxMainButton.innerHTML = "SFX SOUND OFF";
+            sfxMainButton.classList.add('off');
+            sfxMainButton.classList.remove('on');
+        }
+        e.innerHTML = "SFX SOUND OFF";
+        e.classList.add('off');
+        e.classList.remove('on');
+    } else {
+        if (e.id === "effect-sound-title") {
+            sfxMainButton.innerHTML = "SFX SOUND OFF";
+            sfxMainButton.classList.add('on');
+            sfxMainButton.classList.remove('off');
+        }
+        e.innerHTML = "SFX SOUND ON";
+        e.classList.add('on');
+        e.classList.remove('off');
+    }
+}
 
 function showMain(e) {
     for (let i=0; i<radios.length; i++) {
@@ -52,6 +108,7 @@ function showMain(e) {
     }
     titlePageContainer.classList.add('ghost');
     mainContainer.classList.remove('ghost');
+    clickSound.play();
 }
 
 function init() {
@@ -148,6 +205,7 @@ function dropBomb(e) {
         computerFilter.setAttribute('class', 'not-turn');
         playerFilter.classList.remove('not-turn');
         e.target.classList.add("miss");
+        missSound.play();
         computerBoard[row][col] = "O";
         computerBoardEle.classList.add('noClick');
         if (difficulty === "easy") {
@@ -164,8 +222,11 @@ function dropBomb(e) {
     } else {
         e.target.classList.add("hit");
         computerBoard[row][col] = "X";
+        hitSound.play();
         playerHitCount++;
         if (checkWin(playerHitCount)) {
+            winGameSound.play();
+            computerFilter.setAttribute('class', 'not-turn');
             computerBoardEle.classList.add('noClick');
             resultMessage.innerHTML = "";
             resultMessage.innerHTML = "YOU WON!";
@@ -337,6 +398,8 @@ function computerHardAi(arr) {
         computerHitCount++;
         if (checkWin(computerHitCount)) {
             renderBoard();
+            loseGameSound.play();
+            playerFilter.setAttribute('class', 'not-turn');
             computerBoardEle.classList.add('noClick');
             resultMessage.innerHTML = "";
             resultMessage.innerHTML = "YOU LOST!";
@@ -380,6 +443,8 @@ function computerEasyAi(arr) {
         if (checkWin(computerHitCount)) {
             renderBoard();
             computerBoardEle.classList.add('noClick');
+            loseGameSound.play();
+            playerFilter.setAttribute('class', 'not-turn');
             resultMessage.innerHTML = "";
             resultMessage.innerHTML = "YOU LOST!";
             modal.classList.remove('ghost');
@@ -541,12 +606,14 @@ function drop_handler(ev) {
     const data = ev.dataTransfer.getData('text/plain');
     ev.target.appendChild(document.getElementById(data));
     removeDropableLocations();
+    clickSound.play();
     updateStateBoard();
 }
 
 // end
 
 function lockAllShips() {
+    clickSound.play();
     let ships = document.querySelectorAll('.ship');
     ships.forEach((ship) => {
         ship.removeAttribute('draggable');
@@ -564,7 +631,10 @@ function lockAllShips() {
 function rotatePieces(e) {
     if (!e.target.classList.contains('ship')) return;
     if (checkValidRotation(e.target)) {
+        clickSound.play();
         updateStateBoard();
+    } else {
+        invalidSound.play();
     }
 }
 

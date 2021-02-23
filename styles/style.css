@@ -1,16 +1,20 @@
 /* 
 CSS TABLE OF CONTENTS 
 1.0 - GENERAL STYLES
-2.0 - BOARD
-
+2.0 - MAIN
+    2.1 - TITLE PAGE
+    2.2 - MAIN BOARD
+    2.3 - MODAL
 */
+
+/* 1.0 - GENERAL STYLES */
 
 html {
     font-family: 'Londrina Solid', cursive;
 }
 
 body {
-    width: 750px;
+    width: 850px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -46,44 +50,13 @@ footer {
     text-align: center;
 }
 
-.modal {
-    position: fixed;
-    z-index: 100;
-    left: 30%;
-    top: 30%;
-    width: 40%;
-    min-width: 200px;
+/* 2.0 - MAIN */
+
+.ghost {
+    display: none;
 }
 
-.modal-content {
-    position: relative;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid black;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    width: 40%;
-    min-width: 200px;
-    background: white;
-    font-size: 1.25em;
-    text-align: center;
-}
-
-#result-message {
-    font-size: 2em;
-    padding: 0.5em;
-}
-
-#lock {
-    font-size: 1.5em;
-}
-
-#play-again {
-    font-size: 1.25em;
-}
-
-#main-play {
-    font-size: 2em;
-}
+/* 2.1 - TITLE PAGE */
 
 .board-title {
     text-align: center;
@@ -94,18 +67,106 @@ footer {
 .title-page {
     position: static;
     text-align: center;
-    width: 750px;
-    margin-top: 30%;
+    width: 650px;
+    margin-top: 20%;
+    margin-left: auto;
+    margin-right: auto;
+    border: 10px solid black;
+    border-radius: 3em;
+    padding-top: 2em;
+    padding-bottom: 2em;
+    background: #f3f3f3;
 }
 
-.ghost {
-    display: none;
+#main-play {
+    font-size: 3em;
+    border-radius: 4px;
+    box-shadow: 5px 5px;
+}
+
+#main-play:active {
+    background:rgba(128, 128, 128, 1);
+    color: white;
+    box-shadow: 0px 0px;
+    transform: translateY(4px);
+    transform: translateX(4px);
+}
+
+.difficulty-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#difficulty input[type="radio"] {
+    opacity: 0.5;
+    position: fixed;
+    width: 0;
+}
+
+#difficulty label {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 2px solid black;
+    background: rgb(241, 241, 241);
+    border-radius: 4px;
+    margin: 5px;
+}
+
+#difficulty input[type="radio"]:checked + label {
+    background: rgb(0, 0, 0);
+    color: rgb(241, 241, 241);
+    border-color: rgb(0, 0, 0);
+}
+
+#effect-sound-title {
+    margin-top: 2em;
+    font-size: 1.25em;
+    border-radius: 4px;
+}
+
+#effect-sound-main {
+    margin-top: 2em;
+    font-size: 1.25em;
+    border-radius: 4px;
+}
+
+.sfx-container {
+    display: flex;
+    justify-content: center;
+}
+
+.on {
+    background: rgb(0, 0, 0);
+    color:rgb(241, 241, 241);
+}
+
+.off {
+    color: rgb(0, 0, 0);
+    background:rgb(241, 241, 241);
+}
+
+
+/* 2.2 - MAIN BOARD */
+
+.main-page {
+    width: 750px;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+    border: 10px solid black;
+    border-radius: 3em;
+    padding: 2em;
+    background: #f3f3f3;
+}
+
+#lock {
+    font-size: 1.5em;
 }
 
 .header {
     font-size: 3.5em;
     text-align: center;
-    padding: 1em;
 }
 
 .instruction-container {
@@ -139,6 +200,8 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
+    animation-name: clicked-hit;
+    animation-duration: 0.5s;
 }
 
 .miss-ship:before {
@@ -152,6 +215,8 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
+    animation-name: clicked-miss;
+    animation-duration: 0.5s;
 }
 
 .board-container {
@@ -175,20 +240,49 @@ footer {
     height: 30px;
 }
 
+@keyframes clicked-hit {
+    0% {
+        transform: scale(0);
+        transition: all 450ms ease 0ms;
+    }
+    50% {
+        transform: scale(1.2);
+        background: #f55252;
+        border-radius: 100%;
+        transition: all 450ms cubic-bezier(1, 1, 0.0, 0.01) 0ms;
+    }
+}
+
 .hit {
     width: 30px;
     height: 30px;
+    animation-name: clicked-hit;
+    animation-duration: 0.5s;
     background: #f96d6d;
+}
+
+@keyframes clicked-miss {
+    0% {
+        transform: scale(0);
+        transition: all 450ms ease 0ms;
+    }
+    50% {
+        transform: scale(1);
+        background: #6595e2;
+        border-radius: 70%;
+        transition: all 450ms cubic-bezier(1, 1, 0.01, 0.01) 0ms;
+    }
 }
 
 .miss {
     width: 30px;
     height: 30px;
+    animation-name: clicked-miss;
+    animation-duration: 0.5s;
     background: #8fb1e9;
 }
 
 .ship {
-    /* think about adding display: absolute */
     position: absolute;
     background: rgba(144, 238, 144, 0.7);
     border: 1px solid rgba(0, 0, 0, 1);
@@ -199,7 +293,7 @@ footer {
     width: 311px;
     height: 359px;
     position: absolute;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(243, 243, 243, 0.5);
     z-index: 2;
 }
 
@@ -252,3 +346,37 @@ footer {
     height: 50px;
     border: 1px solid black;
 }
+
+/* 2.3 - MODAL */
+
+.modal {
+    position: fixed;
+    z-index: 100;
+    left: 30%;
+    top: 30%;
+    width: 40%;
+    min-width: 200px;
+}
+
+.modal-content {
+    position: relative;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid black;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    width: 40%;
+    min-width: 200px;
+    background: white;
+    font-size: 1.25em;
+    text-align: center;
+}
+
+#result-message {
+    font-size: 2em;
+    padding: 0.5em;
+}
+
+#play-again {
+    font-size: 1.25em;
+}
+
