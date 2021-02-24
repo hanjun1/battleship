@@ -17,7 +17,6 @@ let playerTurn = true;
 let difficulty;
 let soundOn = true;
 
-
 /*-- CAHCED ELEMENT REFERENCES --*/
 
 let computerBoardEle = document.getElementById('computer-board');
@@ -36,6 +35,8 @@ let playerFilter = document.getElementById('player-filter');
 let computerFilter = document.getElementById('computer-filter');
 let sfxTitleButton = document.getElementById('effect-sound-title');
 let sfxMainButton = document.getElementById('effect-sound-main');
+let randomizeButton = document.getElementById('randomize');
+let buttonContainer = document.querySelector('.button-container');
 
 /*-- SOUND EFFECTS --*/
 
@@ -52,6 +53,7 @@ lockButton.addEventListener('click', lockAllShips);
 mainPlayButton.addEventListener('click', showMain);
 sfxTitleButton.addEventListener('click', soundState);
 sfxMainButton.addEventListener('click', soundState);
+randomizeButton.addEventListener('click', randomize);
 
 /*-- FUNCTIONS --*/
 
@@ -190,7 +192,6 @@ function createRandomShips(len, board, id) {
     }
 }
 
-
 function idToCoord(str) {
     return str.split(',');
 }
@@ -237,6 +238,18 @@ function dropBomb(e) {
     }
 }
 
+function randomize() {
+    playerBoard = [];
+    initBoardState(playerBoard);
+    createRandomShips(5, playerBoard, "A");
+    createRandomShips(4, playerBoard, "B");
+    createRandomShips(3, playerBoard, "C1");
+    createRandomShips(3, playerBoard, "C2");
+    createRandomShips(2, playerBoard, "D");
+    render();
+    clickSound.play();
+}
+
 function render() {
     let playerSquares = document.querySelectorAll('#player-board > .square');
     renderInitialBoard(playerBoard, playerSquares);
@@ -247,6 +260,9 @@ function renderInitialBoard(board, squares) {
     let row = 0;
     let col = 0;
     squares.forEach((square) => {
+        while (square.hasChildNodes()) {
+            square.removeChild(square.lastChild);
+        }
         let pos = board[row][col];
         if (pos !== "" && pos !== "A" && pos !== "B" && pos !== "C1" && pos !== "C2" && pos !== "D" && pos !== "X" && pos !== "O") {
             let divEl = document.createElement("div");
@@ -612,7 +628,6 @@ function drop_handler(ev) {
     const data = ev.dataTransfer.getData('text/plain');
     ev.target.appendChild(document.getElementById(data));
     removeDropableLocations();
-    
     clickSound.play();
     updateStateBoard();
 }
@@ -627,7 +642,7 @@ function lockAllShips() {
     });
     generateAiMoves(aiMoves);
     computerBoardEle.addEventListener('click', dropBomb);
-    lockButton.setAttribute('class', 'ghost');
+    buttonContainer.setAttribute('class', 'ghost');
     playerBoardEle.classList.add('noClick');
     beforeLockText.classList.add('ghost');
     afterLockText.classList.remove('ghost');

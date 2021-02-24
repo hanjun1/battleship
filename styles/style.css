@@ -1,4 +1,5 @@
 /* 
+
 CSS TABLE OF CONTENTS 
 1.0 - GENERAL STYLES
 2.0 - MAIN
@@ -6,12 +7,13 @@ CSS TABLE OF CONTENTS
     2.2 - MAIN BOARD
     2.3 - MODAL
 3.0 - MEDIA QUERIES
+
 */
 
 /* 1.0 - GENERAL STYLES */
 
 html {
-    font-family: 'Londrina Solid', cursive;
+    font-family: 'Londrina Solid', 'Arial';
 }
 
 body {
@@ -21,7 +23,7 @@ body {
 }
 
 button {
-    font-family: 'Londrina Solid', cursive;
+    font-family: 'Londrina Solid', 'Arial';
     font-size: 1em;
     background: white;
 }
@@ -59,12 +61,6 @@ footer {
 
 /* 2.1 - TITLE PAGE */
 
-.board-title {
-    text-align: center;
-    font-size: 1.5em;
-    margin-bottom: 1em;
-}
-
 .title-page {
     position: static;
     text-align: center;
@@ -77,6 +73,33 @@ footer {
     padding-top: 2em;
     padding-bottom: 2em;
     background: #f3f3f3;
+}
+
+.difficulty-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#difficulty input[type="radio"] {
+    opacity: 0.5;
+    position: fixed;
+    width: 0;
+}
+
+#difficulty input[type="radio"]:checked + label {
+    background: rgb(0, 0, 0);
+    color: rgb(241, 241, 241);
+    border-color: rgb(0, 0, 0);
+}
+
+#difficulty label {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 2px solid black;
+    background: rgb(241, 241, 241);
+    border-radius: 4px;
+    margin: 5px;
 }
 
 #main-play {
@@ -93,33 +116,6 @@ footer {
     transform: translateX(4px);
 }
 
-.difficulty-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#difficulty input[type="radio"] {
-    opacity: 0.5;
-    position: fixed;
-    width: 0;
-}
-
-#difficulty label {
-    display: inline-block;
-    padding: 5px 10px;
-    border: 2px solid black;
-    background: rgb(241, 241, 241);
-    border-radius: 4px;
-    margin: 5px;
-}
-
-#difficulty input[type="radio"]:checked + label {
-    background: rgb(0, 0, 0);
-    color: rgb(241, 241, 241);
-    border-color: rgb(0, 0, 0);
-}
-
 #effect-sound-title {
     margin-top: 2em;
     font-size: 1.25em;
@@ -132,11 +128,6 @@ footer {
     border-radius: 4px;
 }
 
-.sfx-container {
-    display: flex;
-    justify-content: center;
-}
-
 .on {
     background: rgb(0, 0, 0);
     color:rgb(241, 241, 241);
@@ -146,7 +137,6 @@ footer {
     color: rgb(0, 0, 0);
     background:rgb(241, 241, 241);
 }
-
 
 /* 2.2 - MAIN BOARD */
 
@@ -161,63 +151,9 @@ footer {
     background: #f3f3f3;
 }
 
-#lock {
-    font-size: 1.5em;
-}
-
 .header {
     font-size: 3.5em;
     text-align: center;
-}
-
-.instruction-container {
-    display: flex;
-}
-
-.instructions {
-    width: 100%;
-    font-size: 1.2em;
-    text-align: center;
-}
-
-.instructions > p {
-    padding: 0.1em;
-}
-
-.button-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.hit-ship:before {
-    position: relative;
-    content: ' \25CF';
-    font-size: 30px;
-    color: #f96d6d;
-    z-index: 100;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation-name: clicked-hit;
-    animation-duration: 0.5s;
-}
-
-.miss-ship:before {
-    position: relative;
-    content: ' \25CF';
-    font-size: 30px;
-    color: #8fb1e9;
-    z-index: 100;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation-name: clicked-miss;
-    animation-duration: 0.5s;
 }
 
 .board-container {
@@ -241,61 +177,38 @@ footer {
     height: 30px;
 }
 
-@keyframes clicked-hit {
-    0% {
-        transform: scale(0);
-        transition: all 450ms ease 0ms;
-    }
-    50% {
-        transform: scale(1.2);
-        background: #f55252;
-        border-radius: 100%;
-        transition: all 450ms cubic-bezier(1, 1, 0.0, 0.01) 0ms;
-    }
+.button-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.hit {
-    width: 30px;
-    height: 30px;
-    animation-name: clicked-hit;
-    animation-duration: 0.5s;
-    background: #f96d6d;
+#lock, #randomize {
+    font-size: 1.5em;
 }
 
-@keyframes clicked-miss {
-    0% {
-        transform: scale(0);
-        transition: all 450ms ease 0ms;
-    }
-    50% {
-        transform: scale(1);
-        background: #6595e2;
-        border-radius: 70%;
-        transition: all 450ms cubic-bezier(1, 1, 0.01, 0.01) 0ms;
-    }
+#randomize {
+    display: none;
 }
 
-.miss {
-    width: 30px;
-    height: 30px;
-    animation-name: clicked-miss;
-    animation-duration: 0.5s;
-    background: #8fb1e9;
+.board-title {
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 1em;
 }
 
-.ship {
-    position: absolute;
-    background: rgba(144, 238, 144, 0.7);
-    border: 1px solid rgba(0, 0, 0, 1);
-    z-index: 1;
+.instruction-container {
+    display: flex;
 }
 
-.not-turn {
-    width: 311px;
-    height: 359px;
-    position: absolute;
-    background: rgba(243, 243, 243, 0.5);
-    z-index: 2;
+.instructions {
+    width: 100%;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.instructions > p {
+    padding: 0.1em;
 }
 
 @keyframes shake {
@@ -310,6 +223,13 @@ footer {
     80% { transform: translate(-1px, -1px) rotate(1deg); }
     90% { transform: translate(1px, 2px) rotate(0deg); }
     100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+.ship {
+    position: absolute;
+    background: rgba(144, 238, 144, 0.7);
+    border: 1px solid rgba(0, 0, 0, 1);
+    z-index: 1;
 }
 
 .HA {
@@ -352,6 +272,86 @@ footer {
     height: 60px;
 }
 
+@keyframes clicked-hit {
+    0% {
+        transform: scale(0);
+        transition: all 450ms ease 0ms;
+    }
+    50% {
+        transform: scale(1.2);
+        background: #f55252;
+        border-radius: 100%;
+        transition: all 450ms cubic-bezier(1, 1, 0.0, 0.01) 0ms;
+    }
+}
+
+@keyframes clicked-miss {
+    0% {
+        transform: scale(0);
+        transition: all 450ms ease 0ms;
+    }
+    50% {
+        transform: scale(1);
+        background: #6595e2;
+        border-radius: 70%;
+        transition: all 450ms cubic-bezier(1, 1, 0.01, 0.01) 0ms;
+    }
+}
+
+.hit-ship:before {
+    position: relative;
+    content: ' \25CF';
+    font-size: 30px;
+    color: #f96d6d;
+    z-index: 100;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation-name: clicked-hit;
+    animation-duration: 0.5s;
+}
+
+.miss-ship:before {
+    position: relative;
+    content: ' \25CF';
+    font-size: 30px;
+    color: #8fb1e9;
+    z-index: 100;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation-name: clicked-miss;
+    animation-duration: 0.5s;
+}
+
+.hit {
+    width: 30px;
+    height: 30px;
+    animation-name: clicked-hit;
+    animation-duration: 0.5s;
+    background: #f96d6d;
+}
+
+.miss {
+    width: 30px;
+    height: 30px;
+    animation-name: clicked-miss;
+    animation-duration: 0.5s;
+    background: #8fb1e9;
+}
+
+.not-turn {
+    width: 311px;
+    height: 359px;
+    position: absolute;
+    background: rgba(243, 243, 243, 0.5);
+    z-index: 2;
+}
+
 .noClick {
     pointer-events: none;
 }
@@ -360,6 +360,11 @@ footer {
     width: 50px;
     height: 50px;
     border: 1px solid black;
+}
+
+.sfx-container {
+    display: flex;
+    justify-content: center;
 }
 
 /* 2.3 - MODAL */
@@ -397,3 +402,79 @@ footer {
 
 /* 3.0 - MEDIA QUERIES */
 
+@media screen and (max-width: 768px) {
+    body {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 15vw;
+    }
+
+    h2 {
+        font-size: 10vw;
+    }
+
+    .title-page {
+        position: static;
+        text-align: center;
+        width: 80%;
+        margin-top: 20%;
+        margin-left: auto;
+        margin-right: auto;
+        border: 10px solid black;
+        border-radius: 3em;
+        padding-top: 2em;
+        padding-bottom: 2em;
+        background: #f3f3f3;
+    }
+
+    .board-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main-page {
+        width: 83%;
+        margin-top: 0%;
+        margin-left: auto;
+        margin-right: auto;
+        border: 0px solid black;
+    }
+
+    #player-board, #computer-board {
+        width: 310px;
+    }
+
+    .button-container {
+        margin-top: 15px;
+    }
+
+    #randomize {
+        display: block;
+    }
+
+    #before-lock {
+        display: none;
+    }
+
+    .board-title {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .ship {
+        pointer-events: none;
+    }
+    
+    .modal {
+        position: fixed;
+        z-index: 100;
+        left: 18%;
+        top: 40%;
+        width: 40%;
+        min-width: 200px;
+    }
+
+}
