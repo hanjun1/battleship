@@ -16,6 +16,11 @@ let aiHitMoves = [];
 let playerTurn = true;
 let difficulty;
 let soundOn = true;
+let mouseOffSetX;
+let mouseOffSetY;
+let endX;
+let endY;
+let squarePos;
 
 /*-- CAHCED ELEMENT REFERENCES --*/
 
@@ -491,28 +496,30 @@ function shipIdToCoord(id) {
     return id.split(',');
 }
 
-function addDropableLocations(id) {
+function addDropableLocations(id, squarePos) {
     let coord = shipIdToCoord(id);
+    let shipType = coord[0].slice(1,coord[0].length);
     let max;
     let playerSquares = document.querySelectorAll('#player-board > .square');
     switch (coord[0]) {
+        // find the max x or y of droppable location depending on where the square is touched
         case 'HA':
         case 'VA':
-            max = BOARD_LEN - 5;
+            max = BOARD_LEN - 5 + squarePos;
             break;
         case 'HB':
         case 'VB':
-            max = BOARD_LEN - 4;
+            max = BOARD_LEN - 4 + squarePos;
             break;
         case 'HC1':
         case 'HC2':
         case 'VC1':
         case 'VC2':
-            max = BOARD_LEN - 3;
+            max = BOARD_LEN - 3 + squarePos;
             break;
         case 'HD':
         case 'VD':
-            max = BOARD_LEN - 2;
+            max = BOARD_LEN - 2 + squarePos;
             break;
     }
 
@@ -524,14 +531,14 @@ function addDropableLocations(id) {
         case 'HD':
             for (let i=0; i<BOARD_LEN; i++) {
                 for (let j=0; j<BOARD_LEN; j++) {
-                    if (playerBoard[i][j] !== "") {
-                        count = 1;
-                        while (count < BOARD_LEN-max) {
-                            if (j - count < 0) break;
-                            if (playerBoard[i][j-count] === "") {
-                                playerBoard[i][j-count] = "T";
+                    // for every square in the board
+                    if (playerBoard[i][j] !== "" && playerBoard[i][j] !== coord[0] && playerBoard[i][j] !== shipType && playerBoard[i][j] !== "T") {
+                        let shipLength = BOARD_LEN+squarePos-max;
+                        for (let k=0; k<shipLength; k++) {
+                            if (j+squarePos-k > 9 || j+squarePos-k < 0) continue;
+                            if (playerBoard[i][j+squarePos-k] === "") {
+                                playerBoard[i][j+squarePos-k] = "T";
                             }
-                            count++;
                         }
                     }
                 }
@@ -542,8 +549,7 @@ function addDropableLocations(id) {
                     square.setAttribute('ondrop', 'drop_handler(event)');
                     square.setAttribute('ondragover', 'dragover_handler(event)');
                 }
-                // add condition so that it can be dropped on itself
-                if (playerBoard[squareCoord[0]][squareCoord[1]] !== "") {
+                if (playerBoard[squareCoord[0]][squareCoord[1]] !== "" && playerBoard[squareCoord[0]][squareCoord[1]] !== shipType) {
                     square.removeAttribute('ondrop');
                     square.removeAttribute('ondragover');
                 };
@@ -556,14 +562,13 @@ function addDropableLocations(id) {
         case 'VD':
             for (let i=0; i<BOARD_LEN; i++) {
                 for (let j=0; j<BOARD_LEN; j++) {
-                    if (playerBoard[i][j] !== "") {
-                        count = 1;
-                        while (count < BOARD_LEN-max) {
-                            if (i - count < 0) break;
-                            if (playerBoard[i-count][j] === "") {
-                                playerBoard[i-count][j] = "T";
+                    if (playerBoard[i][j] !== "" && playerBoard[i][j] !== coord[0] && playerBoard[i][j] !== shipType && playerBoard[i][j] !== "T") {
+                        let shipLength = BOARD_LEN+squarePos-max;
+                        for (let k=0; k<shipLength; k++) {
+                            if (i+squarePos-k < 0 || i+squarePos-k > 9) continue;
+                            if (playerBoard[i+squarePos-k][j] === "") {
+                                playerBoard[i+squarePos-k][j] = "T";
                             }
-                            count++;
                         }
                     }
                 }
@@ -574,8 +579,7 @@ function addDropableLocations(id) {
                     square.setAttribute('ondrop', 'drop_handler(event)');
                     square.setAttribute('ondragover', 'dragover_handler(event)');
                 }
-                // add condition so that it can be dropped on itself
-                if (playerBoard[squareCoord[0]][squareCoord[1]] !== "") {
+                if (playerBoard[squareCoord[0]][squareCoord[1]] !== "" && playerBoard[squareCoord[0]][squareCoord[1]] !== shipType) {
                     square.removeAttribute('ondrop');
                     square.removeAttribute('ondragover');
                 };
@@ -600,13 +604,14 @@ function removeDropableLocations() {
 }
 
 function drag_start_handler(ev) {
-    // add function to show draggable locations
-    addDropableLocations(ev.target.id);
+    mouseOffSetX = ev.offsetX;
+    mouseOffSetY = ev.offsetY;
+    squarePos = Math.max(Math.floor(mouseOffSetX/31),Math.floor(mouseOffSetY/31));
+    addDropableLocations(ev.target.id, squarePos);
     ev.dataTransfer.setData('text/plain', ev.target.id);
 }
 
 function drag_end_handler(ev) {
-    // add function to show draggable locations
     removeDropableLocations();
 }
 
@@ -626,13 +631,21 @@ function dragover_handler(ev) {
 function drop_handler(ev) {
     ev.preventDefault();
     const data = ev.dataTransfer.getData('text/plain');
-    ev.target.appendChild(document.getElementById(data));
+    let coord = shipIdToCoord(data);
+    let shipOrientation = coord[0].slice(0,1);
+    let selectedLand = idToCoord(ev.path[0].id);
+    let newLand;
+    if (shipOrientation === "H") {
+        newLand = `${selectedLand[0]},${parseInt(selectedLand[1])-squarePos}`;
+    } else if (shipOrientation === "V") {
+        newLand = `${parseInt(selectedLand[0])-squarePos},${selectedLand[1]}`;
+    }
+    newLand = document.getElementById(newLand);
+    newLand.appendChild(document.getElementById(data));
     removeDropableLocations();
     clickSound.play();
     updateStateBoard();
 }
-
-// end
 
 function lockAllShips() {
     clickSound.play();
