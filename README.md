@@ -6,9 +6,9 @@ This project is a game of battleship vs AI. The AI has 2 difficulty levels, easy
 ![alt text](images/post-battle.png "Gameplay Image")
 
 ## Technologies Used
-⋅⋅* HTML
-⋅⋅* CSS
-⋅⋅* JavaScript
+* HTML
+* CSS
+* JavaScript
 
 ## Getting Started
 [Click Here](https://hanjun1.github.io/battleship/) to play the game!
