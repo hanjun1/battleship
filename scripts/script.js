@@ -5,8 +5,19 @@ const TOTAL_SHIPS = 17;
 
 /*-- APP'S STATE (VARIABLES) --*/
 
-// LEGEND : 
-//  H - Horizontal, V - Vertical, A,B,C,D - Ships, X - Hit, O - Miss
+// Legend for Board Elements: 
+//  Orientation of ships:
+//      H - Horizontal
+//      V - Vertical
+//  Ships Name - Length of ship: 
+//      A - 5
+//      B - 4
+//      C1/C2 - 3
+//      D - 2
+//  Other:
+//      X - Hit
+//      O - Miss
+
 let playerBoard = [];
 let computerBoard = [];
 let playerHitCount = 0;
@@ -16,10 +27,6 @@ let aiHitMoves = [];
 let playerTurn = true;
 let difficulty;
 let soundOn = true;
-let mouseOffSetX;
-let mouseOffSetY;
-let endX;
-let endY;
 let squarePos;
 
 /*-- CAHCED ELEMENT REFERENCES --*/
@@ -60,53 +67,30 @@ sfxTitleButton.addEventListener('click', soundState);
 sfxMainButton.addEventListener('click', soundState);
 randomizeButton.addEventListener('click', randomize);
 
-/*-- FUNCTIONS --*/
+/*-- HELPER FUNCTIONS --*/
 
-function soundState(e) {
-    checkIfSfxMain(e.target);
-    if (soundOn) {
-        clickSound = new Audio();
-        missSound = new Audio();
-        hitSound = new Audio();
-        loseGameSound = new Audio();
-        winGameSound = new Audio();
-        invalidSound = new Audio();
-        soundOn = false;
-    } else {
-        clickSound = new Audio('media/click.wav');
-        missSound = new Audio('media/miss-sound.wav');
-        hitSound = new Audio('media/hit-marker-sound.mp3');
-        loseGameSound = new Audio('media/lose-game-sound.mp3');
-        winGameSound = new Audio('media/win-game-sound.mp3');
-        invalidSound = new Audio('media/invalid-sound.mp3');
-        soundOn = true;
-        clickSound.play();
-    }
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
 }
 
-function checkIfSfxMain(e) {
-    if (soundOn) {
-        if (e.id === "effect-sound-title") {
-            sfxMainButton.innerHTML = "SFX SOUND OFF";
-            sfxMainButton.classList.add('off');
-            sfxMainButton.classList.remove('on');
-        }
-        e.innerHTML = "SFX SOUND OFF";
-        e.classList.add('off');
-        e.classList.remove('on');
-    } else {
-        if (e.id === "effect-sound-title") {
-            sfxMainButton.innerHTML = "SFX SOUND OFF";
-            sfxMainButton.classList.add('on');
-            sfxMainButton.classList.remove('off');
-        }
-        e.innerHTML = "SFX SOUND ON";
-        e.classList.add('on');
-        e.classList.remove('off');
-    }
+function idToCoord(str) {
+    return str.split(',');
 }
+
+function shipIdToCoord(id) {
+    return id.split(',');
+}
+
+function numToCoord(num) {
+    let row = Math.floor(num / 10);
+    let col = num % 10;
+    return [row, col];
+}
+
+/*-- MAIN FUNCTIONS --*/
 
 function showMain(e) {
+    /* Removes title page and make main boards visibile */
     for (let i=0; i<radios.length; i++) {
         if (radios[i].checked) {
             difficulty = radios[i].value;
@@ -121,7 +105,7 @@ function showMain(e) {
 function init() {
     initBoard(playerBoard, playerBoardEle);
     initBoard(computerBoard, computerBoardEle);
-    render();
+    renderInitialBoard(playerBoard);
 }
 
 function initBoardState(board) {
@@ -141,7 +125,6 @@ function initBoardEle(boardEle) {
         let divEl = document.createElement("div");
         divEl.setAttribute('class', 'square');
         divEl.setAttribute('id', `${row},${col}`);
-        // maybe think about adding a function for add coordinates as IDs
         boardEle.appendChild(divEl);
         col++;
         if (col > 9) {
@@ -159,10 +142,6 @@ function initBoard(board, boardEl) {
     createRandomShips(3, board, "C1");
     createRandomShips(3, board, "C2");
     createRandomShips(2, board, "D");
-}
-
-function getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
 }
 
 function createRandomShips(len, board, id) {
@@ -197,24 +176,34 @@ function createRandomShips(len, board, id) {
     }
 }
 
-function idToCoord(str) {
-    return str.split(',');
-}
-
 function dropBomb(e) {
     if (!e.target.classList.contains("square") && !e.target.classList.contains("ship")) return;
-    playerLastCoord = idToCoord(e.target.id);
+    let playerLastCoord = idToCoord(e.target.id);
     let row = playerLastCoord[0];
     let col = playerLastCoord[1];
     if (computerBoard[row][col] === "X" || computerBoard[row][col] === "O") return;
     if (computerBoard[row][col] === "") {
+        e.target.classList.add("miss");
+        computerBoard[row][col] = "O";
+        missSound.play();
+    } else {
+        e.target.classList.add("hit");
+        computerBoard[row][col] = "X";
+        hitSound.play();
+        playerHitCount++;
+    }
+    if (checkWin(playerHitCount)) {
+        winGameSound.play();
+        computerFilter.setAttribute('class', 'not-turn');
+        computerBoardEle.classList.add('noClick');
+        resultMessage.innerHTML = "";
+        resultMessage.innerHTML = "YOU WON!";
+        modal.classList.remove('ghost');
+    } else {
         setTimeout(function() {
             computerFilter.setAttribute('class', 'not-turn');
             playerFilter.classList.remove('not-turn');
         }, 500);
-        e.target.classList.add("miss");
-        missSound.play();
-        computerBoard[row][col] = "O";
         computerBoardEle.classList.add('noClick');
         if (difficulty === "easy") {
             setTimeout(function() {
@@ -224,21 +213,6 @@ function dropBomb(e) {
             setTimeout(function() {
                 computerHardAi(aiMoves);
             }, 500);
-        } else {
-            console.log("Something has gone terribly wrong!");
-        }
-    } else {
-        e.target.classList.add("hit");
-        computerBoard[row][col] = "X";
-        hitSound.play();
-        playerHitCount++;
-        if (checkWin(playerHitCount)) {
-            winGameSound.play();
-            computerFilter.setAttribute('class', 'not-turn');
-            computerBoardEle.classList.add('noClick');
-            resultMessage.innerHTML = "";
-            resultMessage.innerHTML = "YOU WON!";
-            modal.classList.remove('ghost');
         }
     }
 }
@@ -251,20 +225,17 @@ function randomize() {
     createRandomShips(3, playerBoard, "C1");
     createRandomShips(3, playerBoard, "C2");
     createRandomShips(2, playerBoard, "D");
-    render();
+    renderInitialBoard(playerBoard);
     clickSound.play();
 }
 
-function render() {
+function renderInitialBoard(board) {
+    /* Initial render of board with state variables 
+    to visualize the game */
     let playerSquares = document.querySelectorAll('#player-board > .square');
-    renderInitialBoard(playerBoard, playerSquares);
-}
-
-// fix render board
-function renderInitialBoard(board, squares) {
     let row = 0;
     let col = 0;
-    squares.forEach((square) => {
+    playerSquares.forEach((square) => {
         while (square.hasChildNodes()) {
             square.removeChild(square.lastChild);
         }
@@ -285,6 +256,7 @@ function renderInitialBoard(board, squares) {
 }
 
 function renderBoard() {
+    /* Render function used for during the game */
     let playerSquares = document.querySelectorAll('#player-board > .square');
     let row = 0;
     let col = 0;
@@ -371,13 +343,6 @@ function checkWin(count) {
     return false;
 }
 
-
-function numToCoord(num) {
-    let row = Math.floor(num / 10);
-    let col = num % 10;
-    return [row, col];
-}
-
 function generateAiMoves(arr) {
     if (difficulty === "easy") {
         for (let i=0; i<100; i++) {
@@ -396,7 +361,6 @@ function generateAiMoves(arr) {
             }
         }
     }
-    
     let m = arr.length, t, i;
     // fisher-yates shuffle
     while (m) {
@@ -442,8 +406,10 @@ function computerHardAi(arr) {
             }
             renderBoard();
             setTimeout(function() {
-                computerHardAi(arr);
-            }, 1000);
+                playerFilter.setAttribute('class', 'not-turn');
+                computerFilter.classList.remove('not-turn');
+            }, 750);
+            computerBoardEle.classList.remove('noClick');
         }
     } else if (playerBoard[row][col] === "") {
         playerBoard[row][col] = "O";
@@ -476,8 +442,10 @@ function computerEasyAi(arr) {
         } else {
             renderBoard();
             setTimeout(function() {
-                computerEasyAi(arr);
-            }, 1000);
+                playerFilter.setAttribute('class', 'not-turn');
+                computerFilter.classList.remove('not-turn');
+            }, 750);
+            computerBoardEle.classList.remove('noClick');
         }
     } else {
         playerBoard[row][col] = "O";
@@ -492,17 +460,12 @@ function computerEasyAi(arr) {
 
 // drag functions
 
-function shipIdToCoord(id) {
-    return id.split(',');
-}
-
 function addDropableLocations(id, squarePos) {
     let coord = shipIdToCoord(id);
     let shipType = coord[0].slice(1,coord[0].length);
     let max;
     let playerSquares = document.querySelectorAll('#player-board > .square');
     switch (coord[0]) {
-        // find the max x or y of droppable location depending on where the square is touched
         case 'HA':
         case 'VA':
             max = BOARD_LEN - 5 + squarePos;
@@ -523,68 +486,57 @@ function addDropableLocations(id, squarePos) {
             break;
     }
 
-    switch (coord[0]) {
-        case 'HA':
-        case 'HB':
-        case 'HC1':
-        case 'HC2':
-        case 'HD':
-            for (let i=0; i<BOARD_LEN; i++) {
-                for (let j=0; j<BOARD_LEN; j++) {
-                    // for every square in the board
-                    if (playerBoard[i][j] !== "" && playerBoard[i][j] !== coord[0] && playerBoard[i][j] !== shipType && playerBoard[i][j] !== "T") {
-                        let shipLength = BOARD_LEN+squarePos-max;
-                        for (let k=0; k<shipLength; k++) {
-                            if (j+squarePos-k > 9 || j+squarePos-k < 0) continue;
-                            if (playerBoard[i][j+squarePos-k] === "") {
-                                playerBoard[i][j+squarePos-k] = "T";
-                            }
+    if (coord[0].slice(0,1) === "H") {
+        for (let i=0; i<BOARD_LEN; i++) {
+            for (let j=0; j<BOARD_LEN; j++) {
+                // for every square in the board
+                if (playerBoard[i][j] !== "" && playerBoard[i][j] !== coord[0] && playerBoard[i][j] !== shipType && playerBoard[i][j] !== "T") {
+                    let shipLength = BOARD_LEN+squarePos-max;
+                    for (let k=0; k<shipLength; k++) {
+                        if (j+squarePos-k > 9 || j+squarePos-k < 0) continue;
+                        if (playerBoard[i][j+squarePos-k] === "") {
+                            playerBoard[i][j+squarePos-k] = "T";
                         }
                     }
                 }
             }
-            playerSquares.forEach((square) => {
-                let squareCoord = idToCoord(square.id);
-                if (squareCoord[1] <= max) {
-                    square.setAttribute('ondrop', 'drop_handler(event)');
-                    square.setAttribute('ondragover', 'dragover_handler(event)');
-                }
-                if (playerBoard[squareCoord[0]][squareCoord[1]] !== "" && playerBoard[squareCoord[0]][squareCoord[1]] !== shipType) {
-                    square.removeAttribute('ondrop');
-                    square.removeAttribute('ondragover');
-                };
-            });
-            break;
-        case 'VA':
-        case 'VB':
-        case 'VC1':
-        case 'VC2':
-        case 'VD':
-            for (let i=0; i<BOARD_LEN; i++) {
-                for (let j=0; j<BOARD_LEN; j++) {
-                    if (playerBoard[i][j] !== "" && playerBoard[i][j] !== coord[0] && playerBoard[i][j] !== shipType && playerBoard[i][j] !== "T") {
-                        let shipLength = BOARD_LEN+squarePos-max;
-                        for (let k=0; k<shipLength; k++) {
-                            if (i+squarePos-k < 0 || i+squarePos-k > 9) continue;
-                            if (playerBoard[i+squarePos-k][j] === "") {
-                                playerBoard[i+squarePos-k][j] = "T";
-                            }
+        }
+        playerSquares.forEach((square) => {
+            let squareCoord = idToCoord(square.id);
+            if (squareCoord[1] <= max) {
+                square.setAttribute('ondrop', 'drop_handler(event)');
+                square.setAttribute('ondragover', 'dragover_handler(event)');
+            }
+            if (playerBoard[squareCoord[0]][squareCoord[1]] !== "" && playerBoard[squareCoord[0]][squareCoord[1]] !== shipType) {
+                square.removeAttribute('ondrop');
+                square.removeAttribute('ondragover');
+            };
+        });
+    } else {
+        for (let i=0; i<BOARD_LEN; i++) {
+            for (let j=0; j<BOARD_LEN; j++) {
+                if (playerBoard[i][j] !== "" && playerBoard[i][j] !== coord[0] && playerBoard[i][j] !== shipType && playerBoard[i][j] !== "T") {
+                    let shipLength = BOARD_LEN+squarePos-max;
+                    for (let k=0; k<shipLength; k++) {
+                        if (i+squarePos-k < 0 || i+squarePos-k > 9) continue;
+                        if (playerBoard[i+squarePos-k][j] === "") {
+                            playerBoard[i+squarePos-k][j] = "T";
                         }
                     }
                 }
             }
-            playerSquares.forEach((square) => {
-                let squareCoord = idToCoord(square.id);
-                if (squareCoord[0] <= max) {
-                    square.setAttribute('ondrop', 'drop_handler(event)');
-                    square.setAttribute('ondragover', 'dragover_handler(event)');
-                }
-                if (playerBoard[squareCoord[0]][squareCoord[1]] !== "" && playerBoard[squareCoord[0]][squareCoord[1]] !== shipType) {
-                    square.removeAttribute('ondrop');
-                    square.removeAttribute('ondragover');
-                };
-            });
-            break;
+        }
+        playerSquares.forEach((square) => {
+            let squareCoord = idToCoord(square.id);
+            if (squareCoord[0] <= max) {
+                square.setAttribute('ondrop', 'drop_handler(event)');
+                square.setAttribute('ondragover', 'dragover_handler(event)');
+            }
+            if (playerBoard[squareCoord[0]][squareCoord[1]] !== "" && playerBoard[squareCoord[0]][squareCoord[1]] !== shipType) {
+                square.removeAttribute('ondrop');
+                square.removeAttribute('ondragover');
+            };
+        });
     }
     for (let i=0; i<BOARD_LEN; i++) {
         for (let j=0; j<BOARD_LEN; j++) {
@@ -604,9 +556,7 @@ function removeDropableLocations() {
 }
 
 function drag_start_handler(ev) {
-    mouseOffSetX = ev.offsetX;
-    mouseOffSetY = ev.offsetY;
-    squarePos = Math.max(Math.floor(mouseOffSetX/31),Math.floor(mouseOffSetY/31));
+    squarePos = Math.max(Math.floor(ev.offsetX/31),Math.floor(ev.offsetY/31));
     addDropableLocations(ev.target.id, squarePos);
     ev.dataTransfer.setData('text/plain', ev.target.id);
 }
@@ -724,7 +674,49 @@ function checkValidRotation(ele) {
     return true;
 }
 
-// game start 
+function soundState(e) {
+    checkIfSfxMain(e.target);
+    if (soundOn) {
+        clickSound.muted = true;
+        missSound.muted = true;
+        hitSound.muted = true;
+        loseGameSound.muted = true;
+        winGameSound.muted = true;
+        invalidSound.muted = true;
+        soundOn = false;
+    } else {
+        clickSound.muted = false;
+        missSound.muted = false;
+        hitSound.muted = false;
+        loseGameSound.muted = false;
+        winGameSound.muted = false;
+        invalidSound.muted = false;
+        soundOn = true;
+        clickSound.play();
+    }
+}
+
+function checkIfSfxMain(e) {
+    if (soundOn) {
+        if (e.id === "effect-sound-title") {
+            sfxMainButton.innerHTML = "SFX SOUND OFF";
+            sfxMainButton.classList.add('off');
+            sfxMainButton.classList.remove('on');
+        }
+        e.innerHTML = "SFX SOUND OFF";
+        e.classList.add('off');
+        e.classList.remove('on');
+    } else {
+        if (e.id === "effect-sound-title") {
+            sfxMainButton.innerHTML = "SFX SOUND OFF";
+            sfxMainButton.classList.add('on');
+            sfxMainButton.classList.remove('off');
+        }
+        e.innerHTML = "SFX SOUND ON";
+        e.classList.add('on');
+        e.classList.remove('off');
+    }
+}
 
 function gameStart() {
     init();
